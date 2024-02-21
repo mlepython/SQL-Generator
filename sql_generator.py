@@ -29,6 +29,7 @@ Using the provided information about the table, the user will ask you to complet
 
 def create_user_message():
     # this will depend on the user input
-    return """
-Generate a random sql query.
-"""
+    user = input("What is your query? or skip")
+    if len(user) == 0:
+        user = "Generate a random sql query."
+    return user
