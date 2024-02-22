@@ -47,5 +47,15 @@ def get_multi_table_info(tables: list):
     
     return my_tables
 
+def execute_query(query):
+    connection, cursor = connect_to_postgres()
+    cursor.execute(query)
+    results = cursor.fetchall()
+    for result in results:
+        print(result)
+    # Close the cursor and connection
+    cursor.close()
+    connection.close()
+
 if __name__=='__main__':
     get_multi_table_info(tables=['customer', 'transactions_FACT'])

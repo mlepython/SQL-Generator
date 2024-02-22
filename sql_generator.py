@@ -8,7 +8,7 @@ load_dotenv(dotenv_path=Path(__file__).parent/".env")
 client = OpenAI()
 model_name = "gpt-3.5-turbo-1106"
 
-def call_openai(system_message, user_message, max_tokens=100):
+def call_openai(system_message, user_message, max_tokens=300):
     messages = [{'role': 'system', 'content': system_message}, {'role': 'user', 'content': user_message}]
     response = client.chat.completions.create(
         model=model_name,
@@ -32,4 +32,8 @@ def create_user_message():
     user = input("What is your query? or skip")
     if len(user) == 0:
         user = "Generate a random sql query."
-    return user
+    return user + '\nSurround the table names in quotes " " and use aliased if required'
+
+def extract_sql_query(text):
+    query = text.split("```sql")[-1].split("```")[0]
+    return query
