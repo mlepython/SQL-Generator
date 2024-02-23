@@ -33,6 +33,10 @@ def get_table_info(table_name):
     for column_info in columns_info:
         db_table += f"{column_info[0]} | {column_info[1]}\n"
         # print(f"Column Name: {column_info[0]}, Data Type: {column_info[1]}")
+    
+    db_table = "Table Name: " + table_name + "\n"
+    for column_info in columns_info:
+        db_table += f"Column Name: {column_info[0]}, Data Type: {column_info[1]}\n"
     print(db_table)
     # Close the cursor and connection
     cursor.close()
@@ -49,13 +53,21 @@ def get_multi_table_info(tables: list):
 
 def execute_query(query):
     connection, cursor = connect_to_postgres()
-    cursor.execute(query)
-    results = cursor.fetchall()
-    for result in results:
-        print(result)
-    # Close the cursor and connection
-    cursor.close()
-    connection.close()
+    try:
+        cursor.execute(query)
+        results = cursor.fetchone()
+        print("Results of Query:\n",results)
+        # for result in results:
+        #     print(result)
+        
+    except psycopg2.Error as e:
+        print("Error executing query:", e)
+        results = None
+
+    finally:
+        # Close the cursor and connection in a 'finally' block to ensure it happens even if an exception occurs
+        cursor.close()
+        connection.close()
 
 if __name__=='__main__':
     get_multi_table_info(tables=['customer', 'transactions_FACT'])

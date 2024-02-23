@@ -1,7 +1,7 @@
 import database_connect
 import sql_generator
 
-table_name = 'items_purchased_FACT'
+# table_name = 'items_purchased_FACT'
 # db_table = database_connect.get_table_info(table_name=table_name)
 
 db_table = database_connect.get_multi_table_info(tables=['items_purchased_FACT', 'transactions_FACT', 'customer_DIM','inventory', 'date_DIM'])
