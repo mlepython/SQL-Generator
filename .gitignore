@@ -1,3 +1,6 @@
 __pycache__
 venv
 .env
+
+connect_database/ibm_credentials.json
+connect_database/.env
