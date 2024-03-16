@@ -5,8 +5,8 @@ import psycopg2
 
 load_dotenv(dotenv_path=Path(__file__).parent/".env")
 
-username = os.getenv('PG_USERNAME')
-password = os.getenv('PG_PASSWORD')
+username = os.getenv('POSTGRES_USERNAME')
+password = os.getenv('POSTGRES_PASSWORD')
 
 database_name = 'salesdata'
 table_name = 'customer'
@@ -15,7 +15,7 @@ def connect_to_postgres():
     connection = psycopg2.connect(
         user=username,
         password=password,
-        host='localhost',
+        host='host.docker.internal',
         port='5432',
         database=database_name
     )
@@ -65,7 +65,6 @@ def execute_query(query):
         results = None
 
     finally:
-        # Close the cursor and connection in a 'finally' block to ensure it happens even if an exception occurs
         cursor.close()
         connection.close()
 

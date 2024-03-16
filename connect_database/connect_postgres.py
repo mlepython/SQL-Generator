@@ -2,25 +2,24 @@ from dotenv import load_dotenv
 import os
 from pathlib import Path
 import psycopg2
+import time
 
 class PostgreSQLConnector:
     def __init__(self, database_name='salesdata'):
         self.load_environment()
-        self.username = os.getenv('PG_USERNAME')
-        self.password = os.getenv('PG_PASSWORD')
+        self.username = os.getenv('POSTGRES_USERNAME')
+        self.password = os.getenv('POSTGRES_PASSWORD')
+        self.postgres_port = os.environ.get('POSTGRES_PORT', '5432')
+        # self.postgres_host = os.environ.get('POSTGRES_HOST', 'host.docker.internal')
         self.database_name = database_name
 
     def load_environment(self):
         load_dotenv(dotenv_path=Path(__file__).parent/".env")
 
     def connect_to_postgres(self):
-        connection = psycopg2.connect(
-            user=self.username,
-            password=self.password,
-            host='localhost',
-            port='5432',
-            database=self.database_name
-        )
+        # Forming the connection string
+        connection_string = f"host=host.docker.internal port={self.postgres_port} dbname={self.database_name} user={self.username} password={self.password}"
+        connection = psycopg2.connect(connection_string)
         cursor = connection.cursor()
         return connection, cursor
 
@@ -47,6 +46,24 @@ class PostgreSQLConnector:
         
         return my_tables
 
+    def get_all_tables(self):
+        connection, cursor = self.connect_to_postgres()
+        db_query = '''SELECT table_name
+        FROM information_schema.tables
+        WHERE table_schema = 'public' AND table_type = 'BASE TABLE';
+        '''
+        cursor.execute(db_query)
+        table_names = cursor.fetchall()
+
+        tables = []
+        for table in table_names:
+            tables.append(table[0])
+
+        cursor.close()
+        connection.close()
+        return tables
+        
+
     def execute_query(self, query):
         connection, cursor = self.connect_to_postgres()
         try:
@@ -62,4 +79,6 @@ class PostgreSQLConnector:
 
 if __name__ == '__main__':
     connector = PostgreSQLConnector()
-    connector.get_multi_table_info(tables=['customer', 'transactions_FACT'])
+    # connector.connect_to_postgres()
+    # connector.get_all_tables()
+    connector.get_multi_table_info(tables=connector.get_all_tables())

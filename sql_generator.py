@@ -5,7 +5,7 @@ from pathlib import Path
 
 load_dotenv(dotenv_path=Path(__file__).parent/".env")
 
-client = OpenAI()
+client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 model_name = "gpt-3.5-turbo-1106"
 model_name = "gpt-4-1106-preview"
 

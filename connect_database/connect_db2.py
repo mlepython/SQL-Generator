@@ -89,7 +89,23 @@ class IBMdb2Connector:
         finally:
             pass
             # No need to close the connection here; it can be closed in the calling code
+        
+    def get_table_info(self, table_name):
+        connection, cursor = self.connect_to_postgres()
+        table_query = f"SELECT column_name, data_type FROM information_schema.columns WHERE table_name = '{table_name}'"
+        cursor.execute(table_query)
+        columns_info = cursor.fetchall()
 
+        db_table = f"Table Name: {table_name}\nColumn Name | Data Type\n"
+        for column_info in columns_info:
+            db_table += f"{column_info[0]} | {column_info[1]}\n"
+
+        print(db_table)
+        cursor.close()
+        connection.close()
+
+        return db_table
+    
 if __name__ == '__main__':
     ibm_credentials = Path(__file__).parent/'ibm_credentials.json'
     ibm = IBMdb2Connector()
@@ -100,6 +116,7 @@ if __name__ == '__main__':
     # conn = connect_db(credentials)
 
     query = "SELECT * FROM FACTSALES LIMIT 10;"
+    query = "SELECT COLNAME, TYPENAME FROM SYSIBM.SYSCOLUMNS; "
     ibm.execute_db_query(query)
 
     # ibm_db.close(conn)

@@ -4,3 +4,5 @@ venv
 
 connect_database/ibm_credentials.json
 connect_database/.env
+
+database_connect

@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: my-postgres-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: sqlpassword
+      # POSTGRES_DB: dvdrental
+    ports:
+      - "5432:5432"
+  
+  python-app:
+    build:
+      context: ./
+    container_name: my-python-app
+    depends_on:
+      - postgres
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: sqlpassword
+    volumes:
+      - ./:/app
+    stdin_open: true
+    tty: true
